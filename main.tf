@@ -1,6 +1,6 @@
 provider "aws" {
     region = "us-east-1"
-    shared_credentials_file = "C:/Users/TomDane/.aws/credentials"
+    shared_credentials_file = "./credentials.txt"
     profile = "ocius"
 }
 

@@ -1,7 +1,10 @@
+credentials.txt
+terraform.exe
+
 # Compiled files
 *.tfstate
 *.tfstate.backup
 
 # Module directory
 .terraform/
-terraform.exe
+
