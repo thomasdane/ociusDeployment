@@ -1,3 +1,11 @@
+provider "aws" {
+    region = "us-east-1"
+    shared_credentials_file = "./credentials"
+    profile = "ocius"
+}
+
+data "aws_availability_zones" "all" {}
+
 resource "aws_launch_configuration" "example" {
     image_id = "ami-2d39803a"
     instance_type = "t2.nano"
@@ -59,7 +67,7 @@ resource "aws_elb" "example" {
     }
 
     health_check {
-        healhy_threshold = 2
+        healthy_threshold = 2
         unhealthy_threshold = 2
         timeout = 3
         interval = 30
@@ -81,8 +89,13 @@ resource "aws_security_group" "elb" {
         from_port = 0
         to_port = 0
         protocol = "-1"
-        cidr_blocks = [0.0.0.0/0]
+        cidr_blocks = ["0.0.0.0/0"]
     }
+}
+
+variable "server_port" {
+  description = "The port the server will use for HTTP requests"
+  default = 8080
 }
 
 output "elb_dns_name" {
