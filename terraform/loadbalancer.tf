@@ -18,3 +18,29 @@ resource "aws_elb" "example" {
         target = "HTTP:${var.server_port}/"
     }
 }
+
+resource "aws_alb_listener" "ocius" {
+    load_balancer_arn = "${aws_elb.example.arn}"
+    port = "80"
+    protocol = "HTTP"
+
+    default_action {
+        target_group_arn = "${aws_alb_target_group.wordpress.arn}"
+        type = "forward"
+    }
+}
+
+resource "aws_alb_listener_rule" "wordpress" {
+    listener_arn = "${aws_alb_listener.ocius.arn}"
+    priority = 99
+
+    action {
+        type = "forward"
+        target_group_arn = "${aws_alb_target_group.wordpress.arn}"
+    }
+
+    condition {
+        field = "host-header"
+        values = ["ocius.com"]
+    }
+}
