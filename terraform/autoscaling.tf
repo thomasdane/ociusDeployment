@@ -5,8 +5,8 @@ resource "aws_autoscaling_group" "example" {
     min_size = 1
     max_size = 1
 
-    load_balancers = ["${aws_elb.example.name}"]
-    health_check_type = "ELB"
+    load_balancers = ["${aws_alb.example.name}"]
+    health_check_type = "ALB"
 
     tag {
         key = "Name"

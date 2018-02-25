@@ -9,7 +9,12 @@ resource "aws_vpc" "main" {
     cidr_block = "10.0.0.0/16"
 }
 
-# resource "aws_lb_target_group_attachement" "test" {
-#     target_group_arn = "${aws_alb_target_group.wordpress.arn}"
-#     target_id = "${aws_security_group.instance.id}"
-# }
+resource "aws_subnet" "main" {
+    vpc_id = "${aws_vpc.main.id}"
+    cidr_block = "10.0.0.0/24"
+}
+
+resource "aws_autoscaling_attachment" "wordpress" {
+    alb_target_group_arn = "${aws_alb_target_group.wordpress.arn}"
+    autoscaling_group_name = "${aws_autoscaling_group.example.id}"
+}

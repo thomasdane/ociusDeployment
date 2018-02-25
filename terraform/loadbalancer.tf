@@ -1,26 +1,10 @@
-resource "aws_elb" "example" {
+resource "aws_alb" "example" {
     name = "terraform-asg-example"
-    security_groups = ["${aws_security_group.elb.id}"]
-    availability_zones = ["${data.aws_availability_zones.all.names}"]
-
-    listener {
-        lb_port = 80
-        lb_protocol = "http"
-        instance_port = "${var.server_port}"
-        instance_protocol = "http"
-    }
-
-    health_check {
-        healthy_threshold = 2
-        unhealthy_threshold = 2
-        timeout = 3
-        interval = 30
-        target = "HTTP:${var.server_port}/"
-    }
+    security_groups = ["${aws_security_group.alb.id}"]
 }
 
 resource "aws_alb_listener" "ocius" {
-    load_balancer_arn = "${aws_elb.example.arn}"
+    load_balancer_arn = "${aws_alb.example.arn}"
     port = "80"
     protocol = "HTTP"
 
@@ -31,6 +15,7 @@ resource "aws_alb_listener" "ocius" {
 }
 
 resource "aws_alb_listener_rule" "wordpress" {
+    depends_on = ["aws_alb_target_group.wordpress"]
     listener_arn = "${aws_alb_listener.ocius.arn}"
     priority = 99
 
@@ -40,7 +25,7 @@ resource "aws_alb_listener_rule" "wordpress" {
     }
 
     condition {
-        field = "host-header"
-        values = ["ocius.com"]
+        field = "path-pattern"
+        values = ["/wordpress"]
     }
 }

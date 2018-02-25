@@ -15,8 +15,8 @@ resource "aws_security_group" "instance" {
 }
 
 // Security group for the load balancer
-resource "aws_security_group" "elb" {
-    name = "terraform-example-elb"
+resource "aws_security_group" "alb" {
+    name = "terraform-example-alb"
 
     ingress {
         from_port = 80
