@@ -1,6 +1,8 @@
 resource "aws_alb" "example" {
     name = "terraform-asg-example"
+    internal = false
     security_groups = ["${aws_security_group.alb.id}"]
+    subnets = ["${aws_subnet.subnet.*.id}"]
 }
 
 resource "aws_alb_listener" "ocius" {
