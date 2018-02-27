@@ -1,2 +1,2 @@
 # ociusDeployment
-Terraform scripts to deploy ocius.com.au
+Terraform scripts to deploy https://ocius.com.au
