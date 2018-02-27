@@ -4,4 +4,12 @@ provider "aws" {
     profile = "ocius"
 }
 
+terraform {
+    backend "s3" {
+        bucket = "ocius-terraform"
+        key = "state"
+        region = "ap-southeast-2"
+    }
+}
+
 data "aws_availability_zones" "all" {}
