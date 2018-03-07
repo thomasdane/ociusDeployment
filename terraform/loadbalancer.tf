@@ -1,20 +1,28 @@
-resource "aws_elb" "example" {
-    name = "terraform-asg-example"
-    security_groups = ["${aws_security_group.elb.id}"]
-    availability_zones = ["${data.aws_availability_zones.all.names}"]
+resource "aws_alb" "main" {
+    name = "ocius-load-balancer"
+    subnets = ["${aws_subnet.main.*.id}"]
+    security_groups = ["${aws_security_group.lb_sg.id}"]
+}
 
-    listener {
-        lb_port = 80
-        lb_protocol = "http"
-        instance_port = "${var.server_port}"
-        instance_protocol = "http"
-    }
+resource "aws_alb_listener" "front_end" {
+  load_balancer_arn = "${aws_alb.main.id}"
+  port              = "80"
+  protocol          = "HTTP"
 
-    health_check {
-        healthy_threshold = 2
-        unhealthy_threshold = 2
-        timeout = 3
-        interval = 30
-        target = "HTTP:${var.server_port}/"
-    }
+  default_action {
+    target_group_arn = "${aws_alb_target_group.test.id}"
+    type             = "forward"
+  }
+}
+
+resource "aws_alb_target_group" "test" {
+  name     = "tf-example-ecs-ghost"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "${aws_vpc.main.id}"
+}
+
+resource "aws_autoscaling_attachment" "asg_attachment_bar" {
+  autoscaling_group_name = "${aws_autoscaling_group.example.id}"
+  alb_target_group_arn   = "${aws_alb_target_group.test.arn}"
 }
