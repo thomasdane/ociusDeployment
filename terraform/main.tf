@@ -7,7 +7,7 @@ provider "aws" {
 terraform {
     backend "s3" {
         bucket = "ocius-terraform"
-        key = "state"
+        key = "ocius.tfstate"
         region = "ap-southeast-2"
     }
 }
