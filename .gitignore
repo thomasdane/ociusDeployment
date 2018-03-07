@@ -1,6 +1,3 @@
-credentials
-terraform.exe
-
 # Compiled files
 *.tfstate
 *.tfstate.backup
