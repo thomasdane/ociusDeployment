@@ -35,7 +35,7 @@ resource "aws_autoscaling_group" "tracker" {
   availability_zones   = ["${data.aws_availability_zones.all.names}"]
 
   min_size = 1
-  max_size = 1
+  max_size = 3
 
   load_balancers    = ["${aws_elb.tracker.name}"]
   health_check_type = "ELB"
@@ -88,7 +88,7 @@ resource "aws_security_group" "elb" {
 
 variable "server_port" {
   description = "The port the server will use for HTTP requests"
-  default     = 8080
+  default     = 80
 }
 
 output "elb_dns_name" {
