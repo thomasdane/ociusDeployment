@@ -1,12 +1,12 @@
 provider "aws" {
-  region  = "ap-southeast-1"
+  region  = "ap-southeast-2"
   profile = "ocius"
 }
 
 data "aws_availability_zones" "all" {}
 
 resource "aws_launch_configuration" "tracker" {
-  image_id        = "ami-35663649"
+  image_id        = "${var.sydney_tracker}"
   instance_type   = "t2.nano"
   security_groups = ["${aws_security_group.instance.id}"]
 
@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "tracker" {
 
   tag {
     key                 = "Name"
-    value               = "tracking-server-asg"
+    value               = "tracking-server-asg-instance"
     propagate_at_launch = true
   }
 }
@@ -57,6 +57,14 @@ resource "aws_elb" "tracker" {
     lb_protocol       = "http"
     instance_port     = "${var.server_port}"
     instance_protocol = "http"
+  }
+
+  listener {
+    lb_port            = 443
+    lb_protocol        = "https"
+    instance_port      = "${var.server_port}"
+    instance_protocol  = "http"
+    ssl_certificate_id = "arn:aws:acm:ap-southeast-2:873069210492:certificate/02f0abb8-cb17-41a0-8508-8f9b925d6714"
   }
 
   health_check {
@@ -78,6 +86,13 @@ resource "aws_security_group" "elb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -89,6 +104,11 @@ resource "aws_security_group" "elb" {
 variable "server_port" {
   description = "The port the server will use for HTTP requests"
   default     = 80
+}
+
+variable "sydney_tracker" {
+  description = "The ami of the tracking server in Sydney region"
+  default     = "ami-903efdf2"
 }
 
 output "elb_dns_name" {
